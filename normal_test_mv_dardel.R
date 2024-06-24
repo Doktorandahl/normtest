@@ -93,12 +93,14 @@ runner3 <- function(ydist,x1dist,x2dist,n,i,id_row){
 	filename <- paste0('res4/res4_',i %% 128,'.rds')
 	if(file.exists(filename)){
 		runs <- readRDS(filename)
+		cat('File exists. Reading in\n')
 		if(i %in% runs$i){
 			cat('Already run. Skipping',i,'\n')
 			return(NULL)
 		}
 	}else{
 		runs <- NULL
+		cat('File does not exist. Creating\n')
 	}
 
 	t <- Sys.time()
