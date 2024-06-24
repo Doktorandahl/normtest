@@ -173,7 +173,7 @@ runner3 <- function(ydist,x1dist,x2dist,n,i,id_row){
 
 	tmp <- sim_dist(ydist = ydist, y_params = y_params,i=i,
 									x_params = list(x1_params,x2_params), xdist = c(x1dist,x2dist),
-									n = n, nreps_inner = 1000, nreps_outer = 500, early_stop = F, early_stop_interval = 200, alpha_dist = 0.05, alpha_t1e = 0.05)
+									n = n, nreps_inner = 100, nreps_outer = 50, early_stop = F, early_stop_interval = 200, alpha_dist = 0.05, alpha_t1e = 0.05)
 	cat('Finished sim ',i,' in', Sys.time()-t,"\n")
 	saveRDS(bind_rows(runs,bind_cols(tmp,id_row)),filename)
 }
