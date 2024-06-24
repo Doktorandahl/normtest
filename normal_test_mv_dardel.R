@@ -97,6 +97,8 @@ runner3 <- function(ydist,x1dist,x2dist,n,i,id_row){
 			cat('Already run. Skipping',i,'\n')
 			return(NULL)
 		}
+	}else{
+		runs <- NULL
 	}
 
 	t <- Sys.time()
