@@ -188,10 +188,10 @@ grid_of_runs3 <- expand_grid(
 grid_of_runs3 <- grid_of_runs3 %>% arrange(n)
 
 
-if(length(already_run) == 0){
-	already_run <- 0
-}
-remaining <- setdiff(1:nrow(grid_of_runs3),already_run) %>% sort()
+# if(length(already_run) == 0){
+# 	already_run <- 0
+# }
+# remaining <- setdiff(1:nrow(grid_of_runs3),already_run) %>% sort()
 
 registerDoParallel(cores = 128)
 
