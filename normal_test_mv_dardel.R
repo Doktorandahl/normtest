@@ -29,8 +29,8 @@ sim_tp_reg <- function(ydist,
 	kurt <- skew <- rep(NA,nreps)
 	for(i in 1:nreps){
 		y <- do.call(ydist,c(n=n,y_params)) - y_correction
-			x <- map2(xdists,x_params[1:length(xdists)],~do.call(.x,c(n=n,.y))) %>% unlist() %>% matrix(n,length(xdists))
-			m <- lm(y~x)
+		x <- map2(xdists,x_params[1:length(xdists)],~do.call(.x,c(n=n,.y))) %>% unlist() %>% matrix(n,length(xdists))
+		m <- lm(y~x)
 
 		t[i] <- summary(m)$coef[2,3]
 	}
@@ -74,15 +74,6 @@ sim_dist <- function(ydist,
 
 		t1e_rate[i] <- mean(significance_checker(simulated_reg$t,df = simulated_reg$df,alpha = alpha_t1e))
 
-		if(early_stop & i %% early_stop_interval == 0){
-			if(min(apply(p_vals_dist[1:i,],2,mean)) < 0.06 | max(apply(p_vals_dist[1:i,],2,mean)) > 0.95){
-				early_stopped <- TRUE
-				break
-			}
-		}
-
-
-
 
 	}
 	colnames(p_vals_dist) <- paste("b1",c('ad','cvm','ks'),sep = '_')
@@ -96,6 +87,15 @@ sim_dist <- function(ydist,
 
 
 runner3 <- function(ydist,x1dist,x2dist,n,i,id_row){
+	filename <- paste0('res3/res3_',i %% 128,'.rds')
+	if(file.exists(filename)){
+		runs <- readRDS(filename)
+		if(i %in% runs$i){
+			cat('Already run. Skipping',i,'\n')
+			return(NULL)
+		}
+	}
+
 	t <- Sys.time()
 	if(ydist == 'rlnorm0.5' | ydist == 'rlnorm1' | ydist == 'rlnorm1.5' | ydist == 'rlnorm2'){
 		y_params <- list(meanlog = 0,sdlog = as.numeric(str_remove(ydist,'rlnorm')))
@@ -163,8 +163,8 @@ runner3 <- function(ydist,x1dist,x2dist,n,i,id_row){
 	tmp <- sim_dist(ydist = ydist, y_params = y_params,
 									x_params = list(x1_params,x2_params), xdist = c(x1dist,x2dist),
 									n = n, nreps_inner = 1000, nreps_outer = 500, early_stop = T, early_stop_interval = 200, alpha_dist = 0.05, alpha_t1e = 0.05)
-	cat('Finished sim ',i,' in', Sys.time()-t,". Early stop:", tmp$early_stop,'\n')
-	saveRDS(bind_cols(tmp,id_row),paste0('res3/res3_',i,'.rds'))
+	cat('Finished sim ',i,' in', Sys.time()-t)
+	saveRDS(bind_rows(runs,bind_cols(tmp,id_row)),filename)
 }
 
 grid_of_runs3 <- expand_grid(
@@ -186,14 +186,13 @@ grid_of_runs3 <- expand_grid(
 
 grid_of_runs3 <- grid_of_runs3 %>% arrange(n)
 
-already_run <- list.files('res3') %>% str_remove('res3_') %>% str_remove('.rds') %>% as.numeric()
 
 if(length(already_run) == 0){
 	already_run <- 0
 }
 remaining <- setdiff(1:nrow(grid_of_runs3),already_run) %>% sort()
 
-registerDoParallel(cores = 6)
+registerDoParallel(cores = 128)
 
 foreach(k = 1:nrow(grid_of_runs3)) %dopar%{
 	if(k %in% remaining){
