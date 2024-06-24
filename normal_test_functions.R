@@ -56,6 +56,7 @@ significance_checker <- function(x,df,alpha = 0.05,pars){
 sim_dist <- function(ydist,
 										 y_params = list(),
 										 n,
+										 i,
 										 xdists = NULL,
 										 x_params = list(),
 										 nreps_inner,
@@ -70,13 +71,13 @@ sim_dist <- function(ydist,
 	t1e_rate <- rep(NA,nreps_outer)
 
 	early_stopped <- FALSE
-	for(i in 1:nreps_outer){
+	for(j in 1:nreps_outer){
 
 		simulated_reg <- sim_tp_reg(ydist = ydist, y_params = y_params, n = n, xdists = xdists, x_params = x_params, nreps = nreps_inner)
 
-		p_vals_dist[i,] <- three_dist_tests(simulated_reg$t,df = simulated_reg$df,alpha = alpha_dist)
+		p_vals_dist[j,] <- three_dist_tests(simulated_reg$t,df = simulated_reg$df,alpha = alpha_dist)
 
-		t1e_rate[i] <- mean(significance_checker(simulated_reg$t,df = simulated_reg$df,alpha = alpha_t1e))
+		t1e_rate[j] <- mean(significance_checker(simulated_reg$t,df = simulated_reg$df,alpha = alpha_t1e))
 
 
 	}
@@ -170,7 +171,7 @@ runner3 <- function(ydist,x1dist,x2dist,n,i,id_row){
 
 	cat('Starting sim ',i,' at', Sys.time()-t,"\n")
 
-	tmp <- sim_dist(ydist = ydist, y_params = y_params,
+	tmp <- sim_dist(ydist = ydist, y_params = y_params,i=i,
 									x_params = list(x1_params,x2_params), xdist = c(x1dist,x2dist),
 									n = n, nreps_inner = 1000, nreps_outer = 500, early_stop = F, early_stop_interval = 200, alpha_dist = 0.05, alpha_t1e = 0.05)
 	cat('Finished sim ',i,' in', Sys.time()-t,"\n")
