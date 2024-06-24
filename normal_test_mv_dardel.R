@@ -1,5 +1,6 @@
 library(dplyr)
 library(tidyr)
+library(purrr)
 library(stringr)
 library(foreach)
 library(doParallel)
