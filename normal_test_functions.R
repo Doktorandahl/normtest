@@ -175,5 +175,8 @@ runner3 <- function(ydist,x1dist,x2dist,n,i,id_row){
 									x_params = list(x1_params,x2_params), xdist = c(x1dist,x2dist),
 									n = n, nreps_inner = 1000, nreps_outer = 500, early_stop = F, early_stop_interval = 200, alpha_dist = 0.05, alpha_t1e = 0.05)
 	cat('Finished sim ',i,' in', Sys.time()-t,"\n")
+	if(file.exists(filename)){
+		runs <- readRDS(filename)
+	}
 	saveRDS(bind_rows(runs,bind_cols(tmp,id_row)),filename)
 }
