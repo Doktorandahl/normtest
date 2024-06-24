@@ -1,5 +1,6 @@
 library(dplyr)
 library(tidyr)
+library(stringr)
 library(foreach)
 library(doParallel)
 library(ranger)
@@ -88,7 +89,7 @@ sim_dist <- function(ydist,
 
 
 runner3 <- function(ydist,x1dist,x2dist,n,i,id_row){
-	filename <- paste0('res3/res3_',i %% 128,'.rds')
+	filename <- paste0('res4/res4_',i %% 128,'.rds')
 	if(file.exists(filename)){
 		runs <- readRDS(filename)
 		if(i %in% runs$i){
