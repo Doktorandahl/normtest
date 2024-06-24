@@ -196,10 +196,8 @@ grid_of_runs3 <- grid_of_runs3 %>% arrange(n)
 registerDoParallel(cores = 128)
 
 foreach(k = 1:nrow(grid_of_runs3)) %dopar%{
-	if(k %in% remaining){
 		cat('starting sim ',k,' of', nrow(grid_of_runs3),'n=',grid_of_runs3$n[k], '\n')
 		runner3(grid_of_runs3$ydist[k], grid_of_runs3$x1dist[k], grid_of_runs3$x2dist[k], grid_of_runs3$n[k],k,grid_of_runs3[k,1:2])
-	}
 }
 
 
